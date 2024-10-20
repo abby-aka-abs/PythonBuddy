@@ -1,0 +1,214 @@
+import tkinter as tk
+import math
+import turtle
+import random
+
+# Main window
+root = tk.Tk()
+root.title("Fun Python Activities")
+root.geometry("400x400")
+
+# Button functions
+def open_calculator():
+    calculator_window = tk.Toplevel(root)
+    calculator_window.title("Scientific Calculator")
+    
+    display = tk.Entry(calculator_window, width=40, borderwidth=5)
+    display.grid(row=0, column=0, columnspan=4)
+
+    def click_button(number):
+        current = display.get()
+        display.delete(0, tk.END)
+        display.insert(0, current + str(number))
+
+    def clear_display():
+        display.delete(0, tk.END)
+
+    def evaluate_expression():
+        try:
+            result = eval(display.get())
+            display.delete(0, tk.END)
+            display.insert(0, str(result))
+        except Exception as e:
+            display.delete(0, tk.END)
+            display.insert(0, "Error")
+
+    button_text = [
+        '7', '8', '9', '/', '4', '5', '6', '*', '1', '2', '3', '-', 'C', '0', '=', '+'
+    ]
+
+    row_val, col_val = 1, 0
+    for button in button_text:
+        if button == 'C':
+            btn = tk.Button(calculator_window, text=button, padx=20, pady=20, command=clear_display)
+        elif button == '=':
+            btn = tk.Button(calculator_window, text=button, padx=20, pady=20, command=evaluate_expression)
+        else:
+            btn = tk.Button(calculator_window, text=button, padx=20, pady=20, command=lambda b=button: click_button(b))
+        
+        btn.grid(row=row_val, column=col_val)
+        col_val += 1
+        if col_val > 3:
+            row_val += 1
+            col_val = 0
+
+def open_ping_pong():
+    # Ping pong game with turtle
+    wn = turtle.Screen()
+    wn.title("Ping Pong Game")
+    wn.bgcolor("black")
+    wn.setup(width=800, height=600)
+    wn.tracer(0)  # Speeds up the game by reducing screen updates
+
+    # Paddle A
+    paddle_a = turtle.Turtle()
+    paddle_a.speed(0)
+    paddle_a.shape("square")
+    paddle_a.color("white")
+    paddle_a.shapesize(stretch_wid=6, stretch_len=1)
+    paddle_a.penup()
+    paddle_a.goto(-350, 0)
+
+    # Paddle B
+    paddle_b = turtle.Turtle()
+    paddle_b.speed(0)
+    paddle_b.shape("square")
+    paddle_b.color("white")
+    paddle_b.shapesize(stretch_wid=6, stretch_len=1)
+    paddle_b.penup()
+    paddle_b.goto(350, 0)
+
+    # Ball
+    ball = turtle.Turtle()
+    ball.speed(1)
+    ball.shape("square")
+    ball.color("white")
+    ball.penup()
+    ball.goto(0, 0)
+    ball.dx = 0.15
+    ball.dy = 0.15
+
+    # Paddle Movement
+    def paddle_a_up():
+        y = paddle_a.ycor()
+        if y < 250:
+            y += 20
+        paddle_a.sety(y)
+
+    def paddle_a_down():
+        y = paddle_a.ycor()
+        if y > -240:
+            y -= 20
+        paddle_a.sety(y)
+
+    def paddle_b_up():
+        y = paddle_b.ycor()
+        if y < 250:
+            y += 20
+        paddle_b.sety(y)
+
+    def paddle_b_down():
+        y = paddle_b.ycor()
+        if y > -240:
+            y -= 20
+        paddle_b.sety(y)
+
+    # Keyboard bindings
+    wn.listen()
+    wn.onkeypress(paddle_a_up, "w")
+    wn.onkeypress(paddle_a_down, "s")
+    wn.onkeypress(paddle_b_up, "Up")
+    wn.onkeypress(paddle_b_down, "Down")
+
+    # Game loop
+    while True:
+        wn.update()
+
+        # Move the ball
+        ball.setx(ball.xcor() + ball.dx)
+        ball.sety(ball.ycor() + ball.dy)
+
+        # Border checking
+        if ball.ycor() > 290:
+            ball.sety(290)
+            ball.dy *= -1
+
+        if ball.ycor() < -290:
+            ball.sety(-290)
+            ball.dy *= -1
+
+        if ball.xcor() > 390:
+            ball.goto(0, 0)
+            ball.dx *= -1
+
+        if ball.xcor() < -390:
+            ball.goto(0, 0)
+            ball.dx *= -1
+
+        # Paddle and ball collisions
+        if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < paddle_b.ycor() + 50 and ball.ycor() > paddle_b.ycor() - 50):
+            ball.setx(340)
+            ball.dx *= -1
+
+        if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_a.ycor() + 50 and ball.ycor() > paddle_a.ycor() - 50):
+            ball.setx(-340)
+            ball.dx *= -1
+
+def open_space_invaders():
+    # Placeholder: Space invaders game code using turtle
+    turtle.title("Space Invaders (Placeholder)")
+    turtle.bgcolor("black")
+    # Actual implementation would go here
+    turtle.done()
+
+def open_madlib():
+    madlib_window = tk.Toplevel(root)
+    madlib_window.title("Madlib Game")
+
+    def generate_madlib():
+        noun = noun_entry.get()
+        verb = verb_entry.get()
+        adj = adj_entry.get()
+        place = place_entry.get()
+        story = f"Once upon a time, there was a {adj} {noun} who loved to {verb} in {place}."
+        result_label.config(text=story)
+
+    # Labels and entries
+    tk.Label(madlib_window, text="Enter a noun:").pack()
+    noun_entry = tk.Entry(madlib_window)
+    noun_entry.pack()
+
+    tk.Label(madlib_window, text="Enter a verb:").pack()
+    verb_entry = tk.Entry(madlib_window)
+    verb_entry.pack()
+
+    tk.Label(madlib_window, text="Enter an adjective:").pack()
+    adj_entry = tk.Entry(madlib_window)
+    adj_entry.pack()
+
+    tk.Label(madlib_window, text="Enter a place:").pack()
+    place_entry = tk.Entry(madlib_window)
+    place_entry.pack()
+
+    generate_button = tk.Button(madlib_window, text="Generate Madlib", command=generate_madlib)
+    generate_button.pack()
+
+    result_label = tk.Label(madlib_window, text="", wraplength=300)
+    result_label.pack()
+
+# GUI Layout
+tk.Label(root, text="Choose an Activity", font=("Helvetica", 16)).pack(pady=20)
+
+calculator_button = tk.Button(root, text="Scientific Calculator", command=open_calculator)
+calculator_button.pack(pady=10)
+
+ping_pong_button = tk.Button(root, text="Ping Pong Game", command=open_ping_pong)
+ping_pong_button.pack(pady=10)
+
+space_invaders_button = tk.Button(root, text="Space Invaders Game", command=open_space_invaders)
+space_invaders_button.pack(pady=10)
+
+madlib_button = tk.Button(root, text="Madlib Game", command=open_madlib)
+madlib_button.pack(pady=10)
+
+root.mainloop()
